@@ -66,9 +66,3 @@ full create, read, update, and delete functionality across three tables, and
 keeping all of it isolated from the UI, was the component I'm proudest of. It
 made the rest of the app simpler and demonstrated my grasp of both persistent
 data storage and clean code structure.
-
-## AI Acknowledgment
-
-I used a generative AI tool (Claude) to assist with initial code structure and
-to help organize this reflection. I reviewed, tested, and finalized all work
-myself.
