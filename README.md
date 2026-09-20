@@ -1,68 +1,63 @@
-# CS-360 Mobile Architecture and Programming: Weight Tracking App
+# Weight Tracker for Android
 
-## Project Overview
+A Java Android application for recording daily weight, managing a goal, and reviewing a user's history from a local SQLite database.
 
-This repository contains my final project for CS-360, a fully functional
-Android weight-tracking app built in Java with a local SQLite database.
+## Features
 
-## Reflection
+- Create an account and sign in locally.
+- Add, edit, and delete dated weight entries.
+- Store separate histories and goals for each user.
+- Display entries in a RecyclerView-based history screen.
+- Request SMS permission only when alerts are enabled.
+- Continue working when SMS permission is denied or message delivery fails.
 
-**App requirements, goals, and user needs**
+## Technical design
 
-The goal of this app was to give a user a fast, low-friction way to log their
-weight each day, see that history over time, and get notified when they reach a
-goal weight they set. The whole thing was built around the idea that daily
-logging has to take only a few seconds, because if it feels like a chore, people
-stop doing it. It was designed to address three types of users: someone actively
-losing weight toward a target, someone maintaining their weight, and someone
-tracking for a health reason. All three needed a simple daily log, a clear
-history, and a payoff when a goal is reached.
+| Area | Implementation |
+|---|---|
+| Language | Java 17 |
+| Platform | Android, minimum SDK 24 |
+| Persistence | SQLite through `SQLiteOpenHelper` |
+| UI | Android views, Material Components, RecyclerView |
+| Security | PBKDF2 password hashing with a per-user random salt |
 
-**Screens, features, and user-centered design**
+All SQL operations are isolated in `DatabaseHelper`; the activities handle input, navigation, and presentation. One entry screen supports both create and edit flows, reducing duplicated UI logic.
 
-The app uses four screens: a login screen that also creates an account, a home
-screen built around a grid of every weight entry, an add/edit screen for daily
-entries, and a set-goal screen. I kept users in mind by keeping the interface
-simple and the navigation shallow, so the most common action, adding a weight,
-is always one tap away through a floating action button placed in the natural
-thumb zone. I followed the Android design guidelines for visual hierarchy,
-consistent color, and large touch targets. The designs were successful because
-they matched how people actually use the app: quick, one-handed, a few seconds
-at a time.
+## Source map
 
-**Coding approach and strategies**
+```text
+app/src/main/
+|-- AndroidManifest.xml
+|-- java/com/example/weighttracker/
+|   |-- MainActivity.java
+|   |-- GridActivity.java
+|   |-- AddWeightActivity.java
+|   |-- SetGoalActivity.java
+|   |-- DatabaseHelper.java
+|   |-- Weight.java
+|   `-- WeightAdapter.java
+`-- res/layout/
+    |-- activity_main.xml
+    |-- activity_grid.xml
+    |-- activity_add_weight.xml
+    |-- activity_set_goal.xml
+    `-- row_weight.xml
+```
 
-My main strategy was separating concerns. I kept all the database work in a
-single DatabaseHelper class and left the activities thin, so each screen only
-reads input and displays results rather than touching SQL directly. I also
-reused one screen for both adding and editing entries to keep the code
-consistent. These techniques, keeping classes small and isolating logic in one
-place, are things I can apply to any future project, because they make code far
-easier to read, debug, and extend.
+## Run it
 
-**Testing for functionality**
+1. Open the repository in Android Studio.
+2. Allow Gradle to sync the Android dependencies.
+3. Run the `app` configuration on an Android emulator or device running API 24 or newer.
 
-I tested using the Android Emulator, checking each feature as I built it:
-creating an account, logging in, adding and editing and deleting weights, setting
-a goal, and both granting and denying the SMS permission. Testing incrementally
-mattered because it let me catch small issues while they were still isolated,
-before they could turn into bigger tangled problems. It also confirmed the most
-important requirement, that the app keeps working normally even if the user
-denies the SMS permission.
+SMS delivery depends on device support and permission. The rest of the application does not require SMS access.
 
-**Where I had to innovate**
+## Testing approach
 
-The trickiest part was handling the SMS notification cleanly. The app had to
-request permission, send an alert when the goal was reached if permission was
-granted, and continue working normally if it was denied, all without crashing. I
-solved this by checking the permission at the moment it was relevant, wrapping
-the SMS send in error handling, and falling back to an on-screen message so the
-goal-reached moment was never lost.
+I exercised account creation and login, full weight-entry CRUD, goal updates, activity navigation, database persistence, and both outcomes of the runtime SMS-permission flow in the Android emulator.
 
-**Where I was particularly successful**
+The original submitted archive remains in `archive/`; the complete source is also exposed directly so it can be reviewed without downloading a ZIP.
 
-I was most successful in the database layer. Building the DatabaseHelper with
-full create, read, update, and delete functionality across three tables, and
-keeping all of it isolated from the UI, was the component I'm proudest of. It
-made the rest of the app simpler and demonstrated my grasp of both persistent
-data storage and clean code structure.
+---
+
+Built for CS-360 Mobile Architecture and Programming at Southern New Hampshire University.
